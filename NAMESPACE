@@ -2,6 +2,7 @@
 
 export(getStateSpacePlot)
 export(getTimeDependencePlot)
+export(getTimeWarpDiffPlot)
 import(ConfigOpts)
 import(DEETrajs)
 import(dplyr)
