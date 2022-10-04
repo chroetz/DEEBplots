@@ -1,6 +1,6 @@
 #' @keywords internal
 #' @import ConfigOpts
-#' @import DEETrajs
+#' @import DEEBtrajs
 #' @import dplyr
 #' @import ggplot2
 #' @import stringr

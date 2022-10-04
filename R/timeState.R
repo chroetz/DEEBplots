@@ -1,9 +1,12 @@
 #' @export
-getTimeDependencePlot <- function(truth, esti, obs = NULL, timeRange, title = "", nBasePoints = 1e3) {
+plotTimeState <- function(truth, esti = NULL, obs = NULL, timeRange=NULL, title = "", nBasePoints = 1e3) {
 
-  if (is.null(truth) || is.null(esti)) {
-    warning("Empty trajs. Returning empty plot.")
+  if (is.null(truth)) {
+    warning("truth is NULL. Returning empty plot.")
     return(ggplot())
+  }
+  if (length(timeRange) == 0) {
+    timeRange <- range(truth$time)
   }
   if (is.null(obs)) {
     obs <- truth[0,]
@@ -11,8 +14,16 @@ getTimeDependencePlot <- function(truth, esti, obs = NULL, timeRange, title = ""
     obs <- filter(obs, between(.data$time, timeRange[1], timeRange[2]))
   }
 
-  truth <- interpolateTrajs(truth, seq(timeRange[1], timeRange[2], length.out = nBasePoints))
-  esti <- interpolateTrajs(esti, seq(timeRange[1], timeRange[2], length.out = nBasePoints))
+  # TODO: dont interpolate / make nBasePoints an opts that is set individually per model
+  #times <- seq(timeRange[1], timeRange[2], length.out = nBasePoints)
+  #truth <- interpolateTrajs(truth, times)
+  truth <- truth |> filter(between(.data$time, timeRange[1], timeRange[2]))
+  if (!is.null(esti)) {
+    #esti <- interpolateTrajs(esti, times)
+    esti |> filter(between(.data$time, timeRange[1], timeRange[2]))
+  } else {
+    esti <- truth[0,]
+  }
 
   data <-
     bind_rows(
@@ -36,7 +47,8 @@ getTimeDependencePlot <- function(truth, esti, obs = NULL, timeRange, title = ""
     geom_point(
       data = obs,
       mapping = aes(color = NULL, group = NULL),
-      alpha = 0.1
+      alpha = 0.4,
+      size = 0.2
     ) +
     facet_wrap(vars(dim), ncol = 1, scales = "free_y") +
     xlab(NULL) + ylab(NULL) +

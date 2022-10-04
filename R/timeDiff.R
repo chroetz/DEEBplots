@@ -1,5 +1,5 @@
 #' @export
-getTimeWarpDiffPlot <- function(idxes, time, title) {
+plotTimeWarp <- function(idxes, time, title) {
   timeDiff <- (idxes - seq_along(idxes)) * getTimeStep(time)
   timeDiff <- timeDiff[!is.na(timeDiff)]
   timeCutoff <- time[seq_along(timeDiff)]
