@@ -11,9 +11,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     ConfigOpts,
+    DEEBpath,
     DEEBtrajs,
     dplyr,
     ggplot2,
+    gridExtra,
+    jsonlite,
     rlang,
     stringr,
     tibble,

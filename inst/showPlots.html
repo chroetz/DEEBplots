@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>DEEB - Plots</title>
+<script type="text/javascript" src="./plots/plots.js"></script>
+</head>
+
+<body>
+
+<h2>Controls</h2>
+<div id="tags"></div>
+<b>Size</b>
+<div id="size">
+	<input type="range" min="1" max="60" value="20" class="slider" id="sizeRange">
+</div>
+<h2>Plots</h2>
+<div id="main"></div>
+
+<script type="text/javascript">
+    const names = new Set();
+    for (plt of plots) {
+        for (key of Object.keys(plt)) names.add(key);
+    }
+    names.delete("file");
+    var tags = {};
+    for (key of names) {
+        tags[key] = new Set();
+    }
+	for (plt of plots) {
+        for (key of Object.keys(tags)) {
+            if (key in plt) {
+                tags[key].add(plt[key]);
+            } else {
+                tags[key].add("-");
+            }
+        }
+	}
+	const tagsDiv = document.querySelector("#tags");
+    for (key of names) {
+        var b = document.createElement('b');
+        b.innerText = key;
+        tagsDiv.appendChild(b);
+        var div = document.createElement('div');
+        div.id = key;
+        var buttonAll = document.createElement('button');
+        buttonAll.setAttribute("onclick", "checkAll('"+key+"')");
+        buttonAll.innerText = "All";
+        div.appendChild(buttonAll);
+        var buttonNone = document.createElement('button');
+        buttonNone.setAttribute("onclick", "checkNone('"+key+"')");
+        buttonNone.innerText = "None";
+        div.appendChild(buttonNone);
+        var first = true;
+        for (tag of tags[key]) {
+            var lab = document.createElement('label');
+            var inpt = document.createElement('input');
+            inpt.type = "checkbox";
+            inpt.value = tag;
+            if (first) {
+                inpt.checked = true;
+                first = false;
+            }
+            lab.appendChild(inpt);
+            lab.append(tag+" ");
+            div.appendChild(lab); 
+        }
+        tagsDiv.appendChild(div);
+    }
+
+	document.addEventListener('input', refresh)
+	const main = document.getElementById('main');
+	const sizeRange = document.getElementById('sizeRange');
+
+	function checkAll(which) {
+		document.querySelectorAll("#"+which+" input").forEach(el => el.checked = true);
+		refresh(null);
+	}
+	function checkNone(which) {
+		document.querySelectorAll("#"+which+" input").forEach(el => el.checked = false);
+		refresh(null);
+	}
+
+	function refresh(event) {
+		main.innerHTML = "";
+        var checked = {};
+        for (key of names) {
+            checked[key] = [];
+            for (inp of document.querySelectorAll("#"+key+" input")) {
+                if (inp.checked) {
+                    checked[key].push(inp.value);
+                }
+            }
+        }
+		for (plt of plots) {
+            var allChecked = true;
+            for (key of Object.keys(checked)) {
+                if (key in plt) {
+                    if (!checked[key].includes(plt[key])) {
+                        allChecked = false;
+                        break;
+                    }
+                } else {
+                    if (!checked[key].includes("-")) {
+                        allChecked = false;
+                        break;
+                    }
+                }
+            }
+            if (allChecked) add(plt);
+		}
+	}
+
+	function add(item) {
+		var img = document.createElement('img');
+		img.src = "plots/"+item.file;
+		img.style = "width:"+sizeRange.value+"em";
+		main.appendChild(img);
+	}
+
+	refresh(null);
+</script>
+
+</body>
+</html>
