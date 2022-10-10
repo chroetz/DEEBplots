@@ -1,5 +1,5 @@
 #' @export
-plotStateSpace <- function(truth, esti = NULL, obs = NULL, timeRange = NULL, title = "", nBasePoints=1e3) {
+plotStateSpace <- function(truth, esti = NULL, obs = NULL, timeRange = NULL, title = "") {
 
   if (is.null(truth)) {
     warning("truth is NULL. Returning empty plot.")
@@ -14,12 +14,8 @@ plotStateSpace <- function(truth, esti = NULL, obs = NULL, timeRange = NULL, tit
     obs <- filter(obs, between(.data$time, timeRange[1], timeRange[2]))
   }
 
-  # TODO: dont interpolate / make nBasePoints an opts that is set individually per model
-  #times <- seq(timeRange[1], timeRange[2], length.out = nBasePoints)
-  #truth <- interpolateTrajs(truth, times)
   truth <- truth |> filter(between(.data$time, timeRange[1], timeRange[2]))
   if (!is.null(esti)) {
-    #esti <- interpolateTrajs(esti, times)
     esti |> filter(between(.data$time, timeRange[1], timeRange[2]))
   } else {
     esti <- truth[0,]
