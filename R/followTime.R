@@ -15,7 +15,10 @@ plotFollowTime <- function(followTime, title) {
     )) +
     geom_line() +
     geom_hline(yintercept=followTime$radius, linetype="dashed", color = "red") +
-    geom_vline(xintercept=followTime$followTime, color="blue", linetype="dashed")
+    geom_vline(xintercept=followTime$followTime, color="blue", linetype="dashed") +
+    xlab(NULL) + ylab(NULL) +
+    theme(legend.position = "none") +
+    ggtitle(title)
 
   return(plt)
 }
