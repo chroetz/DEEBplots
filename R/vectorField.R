@@ -78,7 +78,7 @@ plotStateSpaceWithVectorField <- function(trajs, fun, parms, title) {
     ylab(NULL)
   plt <-
     plt +
-    theme(legend.position = "none") +
+    theme(legend.position = "none", plot.title = element_text(size = 8)) +
     coord_fixed(ratio = 1) +
     ggtitle(title)
 

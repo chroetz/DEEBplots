@@ -50,7 +50,7 @@ plotTimeState <- function(truth, esti = NULL, obs = NULL, timeRange=NULL, title 
     ) +
     facet_wrap(vars(dim), ncol = 1, scales = "free_y") +
     xlab(NULL) + ylab(NULL) +
-    theme(legend.position = "none") +
+    theme(legend.position = "none", plot.title = element_text(size = 8)) +
     ggtitle(title)
   return(plt)
 }

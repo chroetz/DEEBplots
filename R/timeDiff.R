@@ -12,6 +12,7 @@ plotTimeWarp <- function(idxes, time, title) {
     geom_vline(xintercept = max(time), color = "gray") +
     geom_line() +
     xlab("time") + ylab("time difference") +
+    theme(legend.position = "none", plot.title = element_text(size = 8)) +
     ggtitle(title)
   if (last(pltData$diff) > 0) {
     plt <- plt +
