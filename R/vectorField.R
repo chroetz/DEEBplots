@@ -95,6 +95,7 @@ plotVectorField <- function(derivTrajs, title) {
     state <- derivTrajs$state
     deriv <- derivTrajs$deriv
   } else {
+    # TODO: what did I do here?
     id <- do.call(paste, c(as.list(as.data.frame(derivTrajs$state[,1:2])), sep="_"))
     resState <- by(derivTrajs$state[,1:2], id, \(df) lapply(df, mean))
     resDeriv <- by(derivTrajs$deriv[,1:2], id, \(df) lapply(df, mean))
@@ -139,7 +140,10 @@ plotVectorField <- function(derivTrajs, title) {
     ylab(NULL)
   plt <-
     plt +
-    theme(legend.position = "none") +
+    theme(
+      legend.position = "none",
+      plot.title = element_text(size = 8),
+      plot.subtitle = element_text(size = 6)) +
     coord_fixed(ratio = 1) +
     ggtitle(
       title,
