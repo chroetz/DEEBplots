@@ -1,5 +1,5 @@
 #' @export
-plotTimeState <- function(truth, esti = NULL, obs = NULL, timeRange=NULL, title = "") {
+plotTimeState <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange=NULL, title = "") {
 
   if (is.null(truth)) {
     warning("truth is NULL. Returning empty plot.")
@@ -20,12 +20,18 @@ plotTimeState <- function(truth, esti = NULL, obs = NULL, timeRange=NULL, title 
   } else {
     esti <- truth[0,]
   }
+  if (!is.null(smooth)) {
+    smooth |> filter(between(.data$time, timeRange[1], timeRange[2]))
+  } else {
+    smooth <- truth[0,]
+  }
 
   data <-
     bind_rows(
       truth |> mutate(kind = "truth"),
-      esti |> mutate(kind = "esti")) |>
-    mutate(kind = factor(.data$kind, c("truth", "esti", "obs"))) |>
+      esti |> mutate(kind = "esti"),
+      smooth |> mutate(kind = "smooth")) |>
+    mutate(kind = factor(.data$kind, c("truth", "esti", "smooth", "obs"))) |>
     arrange(.data$kind) |>
     unpackStateLong()
 

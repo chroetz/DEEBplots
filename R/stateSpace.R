@@ -1,5 +1,5 @@
 #' @export
-plotStateSpace <- function(truth, esti = NULL, obs = NULL, timeRange = NULL, title = "") {
+plotStateSpace <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange = NULL, title = "") {
 
   if (is.null(truth)) {
     warning("truth is NULL. Returning empty plot.")
@@ -20,6 +20,11 @@ plotStateSpace <- function(truth, esti = NULL, obs = NULL, timeRange = NULL, tit
   } else {
     esti <- truth[0,]
   }
+  if (!is.null(smooth)) {
+    smooth |> filter(between(.data$time, timeRange[1], timeRange[2]))
+  } else {
+    smooth <- truth[0,]
+  }
 
   d <- getDim(truth)
   if (d == 2) {
@@ -31,9 +36,10 @@ plotStateSpace <- function(truth, esti = NULL, obs = NULL, timeRange = NULL, tit
   }
   data <- bind_rows(
     truth |> mutate(kind = "truth", state2D = projection2D$project(truth$state)),
-    esti |> mutate(kind = "esti", state2D = projection2D$project(esti$state))
+    esti |> mutate(kind = "esti", state2D = projection2D$project(esti$state)),
+    smooth |> mutate(kind = "smooth", state2D = projection2D$project(smooth$state))
   ) |>
-    mutate(kind = factor(.data$kind, c("truth", "esti", "obs"))) |>
+    mutate(kind = factor(.data$kind, c("truth", "esti", "smooth", "obs"))) |>
     arrange(.data$kind)
   rangeData <-
     bind_rows(
