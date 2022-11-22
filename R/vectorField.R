@@ -34,12 +34,12 @@ plotStateSpaceWithVectorField <- function(trajs, fun, parms, title) {
     t()
   field2D <- projection2D$project(field)
 
-  pltData <- tibble::tibble(
+  pltData <- tibble(
     x = grid2D[,1],
     y = grid2D[,2],
     vx = field2D[,1],
     vy = field2D[,2])
-  trajData <- tibble::tibble(
+  trajData <- tibble(
     x = traj2D[,1],
     y = traj2D[,2],
     trajId = trajs$trajId)
