@@ -1,30 +1,15 @@
 #' @export
 plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange=NULL, title = "") {
 
-  if (is.null(truth)) {
-    warning("truth is NULL. Returning empty plot.")
+  x <- prepareTrajs(truth, esti, smooth, obs, timeRange)
+  if (is.null(x)) {
+    warning("Returning empty plot.")
     return(ggplot())
   }
-  if (length(timeRange) == 0) {
-    timeRange <- range(truth$time)
-  }
-  if (is.null(obs)) {
-    obs <- truth[0,]
-  } else {
-    obs <- filter(obs, between(.data$time, timeRange[1], timeRange[2]))
-  }
-
-  truth <- truth |> filter(between(.data$time, timeRange[1], timeRange[2]))
-  if (!is.null(esti)) {
-    esti |> filter(between(.data$time, timeRange[1], timeRange[2]))
-  } else {
-    esti <- truth[0,]
-  }
-  if (!is.null(smooth)) {
-    smooth |> filter(between(.data$time, timeRange[1], timeRange[2]))
-  } else {
-    smooth <- truth[0,]
-  }
+  truth <- x$truth
+  esti <- x$esti
+  smooth <- x$smooth
+  obs <- x$obs
 
   # TODO: remove code duplications
   data <-
@@ -50,7 +35,6 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
     mutate(kind = factor(.data$kind, c("truth", "esti", "smooth", "obs"))) |>
     arrange(.data$kind)
 
-  cols <- c("truth" = "#D81B60", "esti" = "#1E88E5", "smooth" = "#FFA507", "obs" = "#004D40")
   plt <-
     ggplot(data, aes(
       x = .data$time,
@@ -58,10 +42,8 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
       color = .data$kind,
       group = paste0(.data$trajId, .data$kind)
     )) +
-    scale_colour_manual(values = cols) +
     geom_line() +
-    xlab(NULL) + ylab(NULL) +
-    theme(legend.position = "none", plot.title = element_text(size = 8)) +
+    baseTheme() +
     ggtitle(title)
   return(plt)
 }
