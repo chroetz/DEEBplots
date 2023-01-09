@@ -44,6 +44,7 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
     )) +
     geom_line() +
     baseTheme() +
-    ggtitle(title)
+    ggtitle(title) +
+    scale_y_continuous(trans = "log1p")
   return(plt)
 }
