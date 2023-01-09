@@ -1,5 +1,5 @@
 #' @export
-plotTimeState <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange=NULL, title = "") {
+plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange=NULL, title = "") {
 
   if (is.null(truth)) {
     warning("truth is NULL. Returning empty plot.")
@@ -26,37 +26,41 @@ plotTimeState <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
     smooth <- truth[0,]
   }
 
+  # TODO: remove code duplications
   data <-
     bind_rows(
-      truth |> mutate(kind = "truth"),
-      esti |> mutate(kind = "esti"),
-      smooth |> mutate(kind = "smooth")) |>
+      tibble(
+        trajId = truth$trajId,
+        time = truth$time,
+        distance =
+          sqrt(rowSums((interpolateTrajs(obs, truth$time)$state - truth$state)^2)),
+        kind = "obs"),
+      tibble(
+        trajId = truth$trajId,
+        time = truth$time,
+        distance =
+          sqrt(rowSums((interpolateTrajs(esti, truth$time)$state - truth$state)^2)),
+        kind = "esti"),
+      tibble(
+        trajId = truth$trajId,
+        time = truth$time,
+        distance =
+          sqrt(rowSums((interpolateTrajs(smooth, truth$time)$state - truth$state)^2)),
+        kind = "smooth")) |>
     mutate(kind = factor(.data$kind, c("truth", "esti", "smooth", "obs"))) |>
     arrange(.data$kind) |>
-    unpackStateLong()
-
-  obs <-
-    obs |>
-    mutate(kind = "obs") |>
     unpackStateLong()
 
   cols <- c("truth" = "#D81B60", "esti" = "#1E88E5", "smooth" = "#FFA507", "obs" = "#004D40")
   plt <-
     ggplot(data, aes(
       x = .data$time,
-      y = .data$state,
+      y = .data$distance,
       color = .data$kind,
       group = paste0(.data$trajId, .data$kind)
     )) +
     scale_colour_manual(values = cols) +
-    geom_path() +
-    geom_point(
-      data = obs,
-      mapping = aes(color = NULL, group = NULL),
-      alpha = 0.4,
-      size = 0.2
-    ) +
-    facet_wrap(vars(dim), ncol = 1, scales = "free_y") +
+    geom_line() +
     xlab(NULL) + ylab(NULL) +
     theme(legend.position = "none", plot.title = element_text(size = 8)) +
     ggtitle(title)

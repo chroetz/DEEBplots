@@ -50,6 +50,7 @@ plotStateSpace <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRa
     obs |>
     mutate(kind = "obs", state2D = projection2D$project(obs$state))
 
+  cols <- c("truth" = "#D81B60", "esti" = "#1E88E5", "smooth" = "#FFA507", "obs" = "#004D40")
   plt <-
     ggplot(
       data,
@@ -59,6 +60,7 @@ plotStateSpace <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRa
         group = paste0(.data$trajId, .data$kind),
         color = .data$kind
       )) +
+    scale_colour_manual(values = cols) +
     geom_path() +
     geom_point(data = rangeData, mapping = aes(shape = .data$range), size = 3) +
     geom_point(
