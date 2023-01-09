@@ -48,8 +48,7 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
           sqrt(rowSums((interpolateTrajs(smooth, truth$time)$state - truth$state)^2)),
         kind = "smooth")) |>
     mutate(kind = factor(.data$kind, c("truth", "esti", "smooth", "obs"))) |>
-    arrange(.data$kind) |>
-    unpackStateLong()
+    arrange(.data$kind)
 
   cols <- c("truth" = "#D81B60", "esti" = "#1E88E5", "smooth" = "#FFA507", "obs" = "#004D40")
   plt <-
@@ -66,21 +65,3 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
     ggtitle(title)
   return(plt)
 }
-
-
-unpackStateLong <- function(trajs) {
-  trajs |>
-    mutate(tmp = as_tibble(structure(.data$state, dimnames = list(
-      NULL, paste0("state", 1:ncol(.data$state))
-    )))) |>
-    unpack(.data$tmp) |>
-    select(-.data$state) |>
-    pivot_longer(
-      starts_with("state"),
-      names_to = "dim",
-      values_to = "state",
-      names_transform =  ~ str_sub(., start = 6)
-    ) |>
-    mutate(dim = as.integer(.data$dim))
-}
-
