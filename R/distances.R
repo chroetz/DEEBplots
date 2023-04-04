@@ -14,24 +14,28 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
   # TODO: remove code duplications
   data <-
     bind_rows(
-      tibble(
-        trajId = truth$trajId,
-        time = truth$time,
-        distance =
-          sqrt(rowSums((interpolateTrajs(obs, truth$time)$state - truth$state)^2)),
-        kind = "obs"),
-      tibble(
-        trajId = truth$trajId,
-        time = truth$time,
-        distance =
-          sqrt(rowSums((interpolateTrajs(esti, truth$time)$state - truth$state)^2)),
-        kind = "esti"),
-      tibble(
-        trajId = truth$trajId,
-        time = truth$time,
-        distance =
-          sqrt(rowSums((interpolateTrajs(smooth, truth$time)$state - truth$state)^2)),
-        kind = "smooth")) |>
+      if (nrow(obs) > 0)
+        tibble(
+          trajId = truth$trajId,
+          time = truth$time,
+          distance =
+            sqrt(rowSums((interpolateTrajs(obs, truth$time)$state - truth$state)^2)),
+          kind = "obs"),
+      if (nrow(esti) > 0)
+        tibble(
+          trajId = truth$trajId,
+          time = truth$time,
+          distance =
+            sqrt(rowSums((interpolateTrajs(esti, truth$time)$state - truth$state)^2)),
+          kind = "esti"),
+      if (nrow(smooth) > 0)
+        tibble(
+          trajId = truth$trajId,
+          time = truth$time,
+          distance =
+            sqrt(rowSums((interpolateTrajs(smooth, truth$time)$state - truth$state)^2)),
+          kind = "smooth")
+      ) |>
     mutate(kind = factor(.data$kind, c("truth", "esti", "smooth", "obs"))) |>
     arrange(.data$kind)
 

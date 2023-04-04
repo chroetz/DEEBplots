@@ -1,5 +1,7 @@
+# TODO: Don't do everything twice
+
 #' @export
-plotStateSpaceWithVectorField <- function(trajs, fun, parms, title) {
+plotStateSpaceWithVectorField <- function(trajs, fun, parms, title="", normalizeArrowLength = FALSE) {
   d <- ncol(trajs$state)
 
   if (d == 2) {
@@ -55,6 +57,14 @@ plotStateSpaceWithVectorField <- function(trajs, fun, parms, title) {
   sizeY <- max(diff(range(yGrid))) / nArrows
   size <- mean(c(sizeX, sizeY)) * sqrt(2)
 
+  if (normalizeArrowLength) {
+    pltData$lengthX <- pltData$vx/pltData$speed*size/2
+    pltData$lengthY <- pltData$vy/pltData$speed*size/2
+  } else {
+    pltData$lengthX <- pltData$vx/maxSpeed*size
+    pltData$lengthY <- pltData$vy/maxSpeed*size
+  }
+
   plt <- ggplot(pltData) +
     geom_path(
       data = trajData,
@@ -67,12 +77,18 @@ plotStateSpaceWithVectorField <- function(trajs, fun, parms, title) {
         x = .data$x,
         y = .data$y,
         color = .data$speed,
-        xend = .data$x+.data$vx/maxSpeed*size,
-        yend = .data$y+.data$vy/maxSpeed*size),
+        xend = .data$x+.data$lengthX,
+        yend = .data$y+.data$lengthY),
       arrow = arrow(length = grid::unit(0.1, "cm")),
       size = 0.6) +
+    geom_point(
+      aes(
+        x = .data$x,
+        y = .data$y,
+        color = .data$speed),
+      size = 1.5) +
     scale_colour_continuous(
-      low = "grey80",
+      low = "blue", # TODO
       high = "darkred") +
     xlab(NULL) +
     ylab(NULL)
@@ -86,7 +102,7 @@ plotStateSpaceWithVectorField <- function(trajs, fun, parms, title) {
 }
 
 #' @export
-plotVectorField <- function(derivTrajs, title) {
+plotVectorField <- function(derivTrajs, title="", normalizeArrowLength = FALSE) {
 
   subtitle <- NULL
 
@@ -122,6 +138,14 @@ plotVectorField <- function(derivTrajs, title) {
   sizeY <- max(diff(range(pltData$y))) / nArrows
   size <- mean(c(sizeX, sizeY)) * sqrt(2)
 
+  if (normalizeArrowLength) {
+    pltData$lengthX <- pltData$vx/pltData$speed*size/2
+    pltData$lengthY <- pltData$vy/pltData$speed*size/2
+  } else {
+    pltData$lengthX <- pltData$vx/maxSpeed*size
+    pltData$lengthY <- pltData$vy/maxSpeed*size
+  }
+
   plt <-
     ggplot(pltData) +
     geom_segment(
@@ -129,12 +153,18 @@ plotVectorField <- function(derivTrajs, title) {
         x = .data$x,
         y = .data$y,
         color = .data$speed,
-        xend = .data$x+.data$vx/maxSpeed*size,
-        yend = .data$y+.data$vy/maxSpeed*size),
+        xend = .data$x+.data$lengthX,
+        yend = .data$y+.data$lengthY),
       arrow = arrow(length = grid::unit(0.1, "cm")),
       size = 0.6) +
+    geom_point(
+      aes(
+        x = .data$x,
+        y = .data$y,
+        color = .data$speed),
+      size = 1.5) +
     scale_colour_continuous(
-      low = "grey80",
+      low = "blue",
       high = "darkred") +
     xlab(NULL) +
     ylab(NULL)

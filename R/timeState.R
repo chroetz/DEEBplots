@@ -1,5 +1,5 @@
 #' @export
-plotTimeState <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange=NULL, title = "") {
+plotTimeState <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange=NULL, title = "", obsAlpha = 0.4, obsSize = 0.2) {
 
   x <- prepareTrajs(truth, esti, smooth, obs, timeRange)
   if (is.null(x)) {
@@ -36,8 +36,8 @@ plotTimeState <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
     geom_point(
       data = obs,
       mapping = aes(color = NULL, group = NULL),
-      alpha = 0.4,
-      size = 0.2,
+      alpha = obsAlpha,
+      size = obsSize,
       color = kindColors["obs"]
     ) +
     facet_wrap(vars(dim), ncol = 1, scales = "free_y") +

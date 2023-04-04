@@ -1,5 +1,5 @@
 #' @export
-plotStateSpace <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange = NULL, title = "") {
+plotStateSpace <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRange = NULL, title = "", obsAlpha = 0.4, obsSize = 0.2) {
 
   x <- prepareTrajs(truth, esti, smooth, obs, timeRange)
   if (is.null(x)) {
@@ -50,8 +50,8 @@ plotStateSpace <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRa
     geom_point(
       data = obs,
       mapping = aes(group = NULL, color = NULL),
-      alpha = 0.4,
-      size = 0.2,
+      alpha = obsAlpha,
+      size = obsSize,
       color = kindColors["obs"]
     ) +
     baseTheme() +
