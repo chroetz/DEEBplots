@@ -10,6 +10,7 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
   esti <- x$esti
   smooth <- x$smooth
   obs <- x$obs
+  time <- getEqualTime(truth)
 
   # TODO: remove code duplications
   data <-
@@ -19,21 +20,21 @@ plotDistances <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
           trajId = truth$trajId,
           time = truth$time,
           distance =
-            sqrt(rowSums((interpolateTrajs(obs, truth$time)$state - truth$state)^2)),
+            sqrt(rowSums((interpolateTrajs(obs, .env$time)$state - truth$state)^2)),
           kind = "obs"),
       if (nrow(esti) > 0)
         tibble(
           trajId = truth$trajId,
           time = truth$time,
           distance =
-            sqrt(rowSums((interpolateTrajs(esti, truth$time)$state - truth$state)^2)),
+            sqrt(rowSums((interpolateTrajs(esti, .env$time)$state - truth$state)^2)),
           kind = "esti"),
       if (nrow(smooth) > 0)
         tibble(
           trajId = truth$trajId,
           time = truth$time,
           distance =
-            sqrt(rowSums((interpolateTrajs(smooth, truth$time)$state - truth$state)^2)),
+            sqrt(rowSums((interpolateTrajs(smooth, .env$time)$state - truth$state)^2)),
           kind = "smooth")
       ) |>
     mutate(kind = factor(.data$kind, c("truth", "esti", "smooth", "obs"))) |>
