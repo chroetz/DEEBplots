@@ -41,6 +41,7 @@ plotTimeState <- function(truth, esti = NULL, smooth = NULL, obs = NULL, timeRan
       color = kindColors["obs"]
     ) +
     facet_wrap(vars(dim), ncol = 1, scales = "free_y") +
+    theme(strip.text = element_blank()) +
     baseTheme() +
     ggtitle(title)
   return(plt)
